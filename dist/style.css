@@ -20,6 +20,10 @@ code {
     border-radius: .2rem;
 }
 
+button {
+    cursor: pointer;
+}
+
 /* todo: stylize and understand height relationship: */
 html {
     height: 100vh;
@@ -131,8 +135,8 @@ main {
     border: var(--border-prop-values);
     border-color: var(--border-color-prop-values);
     
-    width: 20rem;
-    height: 20rem;
+    width: fit-content;
+    height: fit-content;
     
     padding: var(--container-inner-spacing);
     
@@ -144,13 +148,19 @@ main {
         
         display: flex;
         justify-content: space-between;
+        
+        #btn--new-game {
+            border: var(--border-prop-values);
+            border-color: var(--border-color-prop-values);
+        }
     }
     
     #game-board {
         display: flex;
         
-        width: 100%;
-        height: 100%;
+        /* 9x9 tileset */
+        width: calc(9rem + 9 * .5rem);
+        height: calc(9rem + 9 * .5rem);
         
         border: var(--border-prop-values);
         border-color: var(--border-color-prop-values-inverted);
@@ -161,35 +171,41 @@ main {
     #game-board .tile {
         width: 1rem;
         height: 1rem;
+        
+        display: flex;
+        justify-content: center;
+        /* Vertically center TextNodes within container */
+        align-items: center;
+        
+        background: lightgrey;
+        
+        border: calc(var(--border-thickness) / 2) var(--border-style);
+        border-color: var(--border-color-prop-values);
     }
 }
 
 /*
 =====================
-    Tiles
+    Tile Variants
 =====================
 */
 
-.tile {
-    background: lightgrey;
-    border: 2px inset;
-    border-color: white grey grey white;
-}
-
-.tile--flagged {
-    background-image: url("./assets/img/flag.svg");
-}
-
-.tile--uncovered {
-    border: 1px solid grey;
-}
-
-.tile--bombed {
-    background: red;
-}
-
-.tile--bomb {
-    background: black;
+#game-board {
+    .tile.tile--flagged {
+        background-image: url("./assets/img/flag.png");
+    }
+    
+    .tile.tile--uncovered {
+        border: 1px solid grey;
+    }
+    
+    .tile.tile--bombed {
+        background: red;
+    }
+    
+    .tile.tile--bomb {
+        background: black;
+    }
 }
 
 /*
@@ -218,4 +234,15 @@ main {
 }
 .tile .number--8 {
     color: darkgrey;
+}
+
+/*
+=====================
+    Utilities
+=====================
+*/
+
+.sr-only {
+    position: absolute;
+    left: -100vw;
 }

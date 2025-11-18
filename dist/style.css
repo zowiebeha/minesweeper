@@ -1,0 +1,221 @@
+/*
+=====================
+    Browser overrides
+=====================
+*/
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+    font-family: "Poppins";
+    color: rgb(8, 8, 8);
+}
+
+code {
+    background: rgb(184, 159, 60);
+    border: 1px solid rgb(151, 130, 46);
+    padding: .25rem;
+    border-radius: .2rem;
+}
+
+/* todo: stylize and understand height relationship: */
+html {
+    height: 100vh;
+}
+
+body {
+    height: 100%;
+    
+    --tile-area: 20px;
+    
+    background-color: black;
+    
+    /* --color-1: */
+    background-image:
+      repeating-linear-gradient(45deg, black 25px, transparent 25px, 
+    transparent 75px, black 75px, black),
+  repeating-linear-gradient(45deg, black 25px, transparent 25px, 
+    transparent 75px, black 75px, black),
+    /* repeating-linear-gradient(90deg, transparent, transparent 10px, white 10px, white 20px),
+    repeating-linear-gradient(grey, grey 10px, transparent 10px, transparent 20px), */
+    /* repeating-linear-gradient(blue, blue 10px, transparent 10px, transparent 20px), */
+    /* repeating-linear-gradient(90deg, green, green 10px, yellow 10px, yellow 20px), */
+        linear-gradient(transparent, transparent);
+        /* repeating-linear-gradient(0.25turn, transparent, #3f87a6 20px); */
+    background: rgb(247, 247, 247);
+}
+
+.noscript {
+    display: inline-block; /* permit width changes */
+    background: rgb(227, 30, 30);
+    border-bottom: 2px solid rgb(206, 32, 32);
+    
+    text-shadow: 0 0 6px rgba(57, 3, 3, 0.64);
+    text-align: center;
+    
+    padding: .5rem;
+    color: white;
+    width: 100%;
+}
+
+/*
+=====================
+    Content
+=====================
+*/
+
+main {
+    display: grid;
+    justify-items: center;
+    
+    padding: 2rem;
+}
+
+/*
+=====================
+    Announcements
+=====================
+*/
+
+#server-notice {
+    /* Center paragraphs without affecting alignment */
+    /* Works, since grid-template-columns is auto by default, which makes the container assume the inline length of its longest inline lengthened child */
+    display: grid;
+    justify-content: center;
+    gap: .5rem;
+    
+    padding: 1rem;
+    background: rgb(213, 195, 106);
+    border-bottom: 2px solid rgb(172, 158, 85);
+    
+    p {
+        color: rgb(38, 32, 2);
+    }
+}
+
+/*
+=====================
+    Game Board
+=====================
+*/
+
+#game-container {
+    order: -1;
+    
+    /* == Variables == */
+    --container-inner-spacing: 1rem;
+    --border-color-light: white;
+    --border-color-dark: grey;
+    --border-thickness: 4px;
+    --border-style: inset;
+    
+    --border-prop-values: 
+        var(--border-thickness)
+        var(--border-style);
+        
+    --border-color-prop-values:
+        var(--border-color-light)
+        var(--border-color-dark)
+        var(--border-color-dark)
+        var(--border-color-light);
+        
+    --border-color-prop-values-inverted:
+        var(--border-color-dark)
+        var(--border-color-light)
+        var(--border-color-light)
+        var(--border-color-dark);
+    /* =============== */
+    
+    border: var(--border-prop-values);
+    border-color: var(--border-color-prop-values);
+    
+    width: 20rem;
+    height: 20rem;
+    
+    padding: var(--container-inner-spacing);
+    
+    #game-header {
+        border: var(--border-prop-values);
+        border-color: var(--border-color-prop-values-inverted);
+            
+        padding: calc(var(--container-inner-spacing) / 2);
+        
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    #game-board {
+        display: flex;
+        
+        width: 100%;
+        height: 100%;
+        
+        border: var(--border-prop-values);
+        border-color: var(--border-color-prop-values-inverted);
+        
+        margin-top: var(--container-inner-spacing);
+    }
+    
+    #game-board .tile {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+/*
+=====================
+    Tiles
+=====================
+*/
+
+.tile {
+    background: lightgrey;
+    border: 2px inset;
+    border-color: white grey grey white;
+}
+
+.tile--flagged {
+    background-image: url("./assets/img/flag.svg");
+}
+
+.tile--uncovered {
+    border: 1px solid grey;
+}
+
+.tile--bombed {
+    background: red;
+}
+
+.tile--bomb {
+    background: black;
+}
+
+/*
+=====================
+    Tile numbers
+=====================
+*/
+
+.tile .number--1 {
+    color: blue;
+}
+.tile .number--2 {
+    color: green;
+}
+.tile .number--3 {
+    color: red;
+}
+.tile .number--4 {
+    color: darkblue;
+}
+.tile .number--5 {
+    color: darkred;
+}
+.tile .number--6 {
+    color: cyan;
+}
+.tile .number--8 {
+    color: darkgrey;
+}

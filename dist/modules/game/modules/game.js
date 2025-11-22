@@ -54,18 +54,25 @@ function Game(gameContainerElement) {
     this[gameBoardElementSymbol] = document.findElementById('game-board');
     const _gameBoardElement = this[gameBoardElementSymbol]
     
+    const gameContainerElementSymbol = Symbol('gameContainerElement');
+    this[gameContainerElementSymbol] = document.findElementById('game-container');
+    const _gameContainerElement = this[gameContainerElementSymbol]
+    
     ////////////////////////////
     // Encapsulated Variables //
     ////////////////////////////
     
-    const timeVariableSymbol = Symbol('time')
+    const timeVariableSymbol = Symbol('time');
     this[timeVariableSymbol] = 0;
+    const _time = this[timeVariableSymbol];
     
-    const startingFlagsVariableSymbol = Symbol('startingFlags')
+    const startingFlagsVariableSymbol = Symbol('startingFlags');
     this[startingFlagsVariableSymbol] = 40; // Around (9x9) / 2
+    const _startingFlags = this[startingFlagsVariableSymbol];
     
-    const flagsAvailable = Symbol('flagsPlaced')
-    this[flagsAvailable]; // This is initialized in newGame()
+    const flagsAvailableSymbol = Symbol('flagsPlaced');
+    this[flagsAvailableSymbol]; // This is initialized in newGame()
+    const _flagsAvailable = this[flagsAvailable];
     
     // Better?:
     // this would be easier to write. I could use getters/setters.
@@ -92,10 +99,11 @@ function Game(gameContainerElement) {
             }
         }
     }
+    const _showBombs = this[showBombsSymbol];
     
-    // onTileClick()
-    const onTileClickSymbol = Symbol('onTileClick function');
-    this[onTileClickSymbol] = function onTileClick(event) {
+    // onTileLeftClick()
+    const onTileLeftClickSymbol = Symbol('onTileLeftClick function');
+    this[onTileLeftClickSymbol] = function onTileLeftClick(event) {
         if (event.target.isBomb) {
             event.target.classList.add('tile--bombed');
             
@@ -103,7 +111,37 @@ function Game(gameContainerElement) {
             // ...
         }
     }
-    const onTileClick = this[onTileClickSymbol];
+    const _onTileLeftClick = this[onTileLeftClickSymbol];
+    
+    // onTileRightClick()
+    const onTileRightClickSymbol = Symbol('onTileRightClick function');
+    this[onTileRightClickSymbol] = function onTileRightClickClick(event) {
+        // Don't open browser's context menu
+        event.preventDefault();
+        
+        const tileElement = event.target;
+        
+        // We shouldn't be able to flag a revealed tile.
+        if (tileElement.isRevealed)
+            return;
+        
+        tileElement.toggleFlag();
+        
+        // Add or subtract a tile depending on the tile state
+        if (tileElement.isFlagged) {
+            this._flagsAvailable -= 1;
+            
+            // Prevent accidental left-click of a flagged tile:
+            tileElement.removeEventListener('click', _onTileLeftClick);
+        }
+        else {
+            this._flagsAvailable += 1;
+            
+            // Enable left-click again, as we've removed the flag:
+            tileElement.addEventListener('click', _onTileLeftClick);
+        }
+    }
+    const _onTileRightClick = this[onTileRightClickSymbol];
     
     // generateBoard()
     const generateBoardSymbol = Symbol('generateBoard function');
@@ -134,7 +172,11 @@ function Game(gameContainerElement) {
         
         // Prevent tile interaction:
         for (const tile of _gameBoardElement) {
-            tile.removeEventListener('click');
+            // Disable left-click handling
+            tile.removeEventListener('click', _onTileLeftClick);
+            
+            // Disable right-click handling
+            tile.removeEventListener('contextmenu', _onTileRightClick);
         }
     }
     

@@ -1,8 +1,9 @@
 import Game from './game/classes.js';
+import removeServerAnnouncement from "./removeServerNotice.js";
 
-// If the main.js module script executes successfully, remove the server notice.
-const serverNoticeDiv = document.getElementById('server-notice');
-serverNoticeDiv.remove();
+// If the main.js module script is fetched and loaded successfully,
+// ... remove the notice about CORs headers.
+removeServerAnnouncement();
 
-const gameContainerElement = document.getElementById('game-container');
-Game(gameContainerElement);
+// Setup game state and interactivity
+new Game();

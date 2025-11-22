@@ -68,15 +68,18 @@ function Game() {
     
     const timeVariableSymbol = Symbol('time');
     this[timeVariableSymbol] = 0;
-    const _time = this[timeVariableSymbol];
+    // no _time variable, as it's a number literal (pass by value, not by reference)
     
     const startingFlagsVariableSymbol = Symbol('startingFlags');
     this[startingFlagsVariableSymbol] = 40; // Around (9x9) / 2
-    const _startingFlags = this[startingFlagsVariableSymbol];
+    // no _startingFlags variable, as it's a number literal (pass by value, not by reference)
     
-    const flagsAvailableSymbol = Symbol('flagsPlaced');
-    this[flagsAvailableSymbol]; // This is initialized in newGame()
-    const _flagsAvailable = this[flagsAvailable];
+    const flagsAvailableVariableSymbol = Symbol('flagsPlaced');
+    this[flagsAvailableVariableSymbol]; // This is initialized in newGame()
+    // no _flagsAvailable variable, as it's a number literal (pass by value, not by reference)
+    
+    // Used to reveal adjacent tiles
+    const tileMatrix = [];
     
     /*
         // Better?:
@@ -107,15 +110,26 @@ function Game() {
     }
     const _showBombs = this[showBombsSymbol];
     
+    // revealAdjacentTiles(tileElement)
+    const revealAdjacentTilesSymbol = Symbol('revealAdjacentTiles function');
+    this[revealAdjacentTilesSymbol] = function revealAdjacentTiles() {
+        // ....
+    }
+    const _revealAdjacentTiles = this[revealAdjacentTilesSymbol];
+    
     // onTileLeftClick()
     const onTileLeftClickSymbol = Symbol('onTileLeftClick function');
     this[onTileLeftClickSymbol] = function onTileLeftClick(event) {
-        if (event.target.isBomb) {
-            event.target.classList.add('tile--bombed');
+        const tileElement = event.target;
+        
+        if (tileElement.isBomb) {
+            tileElement.classList.add('tile--bombed');
             
-            // Trigger game loss
-            // ...
+            _loseGame();
         }
+        
+        // Reveal adjacent tiles
+        _revealAdjacentTiles(tileElement);
     }
     const _onTileLeftClick = this[onTileLeftClickSymbol];
     
@@ -212,6 +226,7 @@ function Game() {
         
         // Stop the timer
         clearInterval(timerIntervalID);
+        timerIntervalID = undefined;
     }
     const _stopTimer = this[stopTimerSymbol];
     
@@ -221,19 +236,25 @@ function Game() {
         // Reset timer
         this[timeVariableSymbol] = 0;
         
-        // Does re-assignment of our pretend private var proxy mutate the private variable,
-        // ... or the location it points to? ugh..
-        
         // Re-fill flags available
-        this[flagsAvailableSymbol] = _startingFlags;
-        _flagCounterElement.textContent = this[flagsAvailable];
+        this[flagsAvailableVariableSymbol] = this[startingFlagsVariableSymbol];
+        _flagCounterElement.textContent = this[flagsAvailableVariableSymbol];
         
         // Populate board with new tiles
         _generateBoard();
         
-        // Start timer
-        _beginTimer();
+        if (timerIntervalID === undefined) {
+            // Start timer
+            _beginTimer();
+        }
     }
+    const _newGame = this[newGameSymbol];
+    
+    ////////////////////////////
+    // New game event handler //
+    ////////////////////////////
+    
+    _newGameButton.addEventListener('click', _newGame);
 }
 
 export default Game;

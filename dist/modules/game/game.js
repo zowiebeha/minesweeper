@@ -11,7 +11,7 @@ import Tile from "./tile.js";
 
 // Or maybe the imperfect and, at times, incorrect book YDKJS can assist?
 
-function Game(gameContainerElement) {
+function Game() {
     /////////////////////////////////////
     // Encapsulated Element References //
     /////////////////////////////////////
@@ -33,30 +33,34 @@ function Game(gameContainerElement) {
     // So, we use a symbol.
     // Yep, JS sucks. All the homies are not so fond of JS compared to Python or C#.
     
+    // The amount one must consider to properly handle the `this` keyword during development
+    // ... is nothing short of poor design. Classes definitely simplify things...
+    
+    // _gameContainerElement
+    const gameContainerElementSymbol = Symbol('gameContainerElement');
+    this[gameContainerElementSymbol] = document.findElementById('game-container');
+    const _gameContainerElement = this[gameContainerElementSymbol]
+    
     // _flagCounterElement
     const flagCounterElementSymbol = Symbol('flagCounterElement');
-    this[flagCounterElementSymbol] = document.findElementById('flag-counter');
+    this[flagCounterElementSymbol] = _gameContainerElement.querySelector('#flag-counter');
     // Expose private variable with a simple-to-use identifier:
     const _flagCounterElement = this[flagCounterElementSymbol]
     
     // _timerElement
     const timerElementSymbol = Symbol('timerElement');
-    this[timerElementSymbol] = document.findElementById('timer');
+    this[timerElementSymbol] = _gameContainerElement.querySelector('#timer');
     const _timerElement = this[timerElementSymbol]
     
     // _newGameButton
     const newGameButtonSymbol = Symbol('newGameButton');
-    this[newGameButtonSymbol] = document.findElementById('btn--new-game');
+    this[newGameButtonSymbol] = _gameContainerElement.querySelector('#btn--new-game');
     const _newGameButton = this[newGameButtonSymbol]
     
     // _gameBoardElement
     const gameBoardElementSymbol = Symbol('gameBoardElement');
-    this[gameBoardElementSymbol] = document.findElementById('game-board');
+    this[gameBoardElementSymbol] = _gameContainerElement.querySelector('#game-board');
     const _gameBoardElement = this[gameBoardElementSymbol]
-    
-    const gameContainerElementSymbol = Symbol('gameContainerElement');
-    this[gameContainerElementSymbol] = document.findElementById('game-container');
-    const _gameContainerElement = this[gameContainerElementSymbol]
     
     ////////////////////////////
     // Encapsulated Variables //
@@ -74,13 +78,15 @@ function Game(gameContainerElement) {
     this[flagsAvailableSymbol]; // This is initialized in newGame()
     const _flagsAvailable = this[flagsAvailable];
     
-    // Better?:
-    // this would be easier to write. I could use getters/setters.
-    // such complexity for something so simple in other languages. it isn't pure.
-    // const gameThis = this;
-    // this.publicState = {
+    /*
+        // Better?:
+        // this would be easier to write. I could use getters/setters.
+        // such complexity for something so simple in other languages. it isn't pure.
+        const gameThis = this;
+        this.publicState = {
 
-    // };
+        };
+    */
     
     //////////////////////////
     // Encapsulated Methods //
@@ -163,12 +169,13 @@ function Game(gameContainerElement) {
             }
         }
     }
+    const _generateBoard = this[generateBoardSymbol];
     
     // loseGame()
     const loseGameSymbol = Symbol('loseGame function');
     this[loseGameSymbol] = function loseGame() {
         // Stop the timer
-        this[stopTimerSymbol]();
+        _stopTimer();
         
         // Prevent tile interaction:
         for (const tile of _gameBoardElement) {
@@ -179,6 +186,7 @@ function Game(gameContainerElement) {
             tile.removeEventListener('contextmenu', _onTileRightClick);
         }
     }
+    const _loseGame = this[loseGameSymbol];
     
     // beginTimer()
     let timerIntervalID;
@@ -193,7 +201,7 @@ function Game(gameContainerElement) {
             this[timeVariableSymbol] += 1;
         }, 1000);
     }
-    const beginTimer = this[beginTimerSymbol];
+    const _beginTimer = this[beginTimerSymbol];
     
     // stopTimer()
     const stopTimerSymbol = Symbol('stopTimer function');
@@ -205,6 +213,7 @@ function Game(gameContainerElement) {
         // Stop the timer
         clearInterval(timerIntervalID);
     }
+    const _stopTimer = this[stopTimerSymbol];
     
     // newGame()
     const newGameSymbol = Symbol('newGame function');
@@ -212,15 +221,18 @@ function Game(gameContainerElement) {
         // Reset timer
         this[timeVariableSymbol] = 0;
         
+        // Does re-assignment of our pretend private var proxy mutate the private variable,
+        // ... or the location it points to? ugh..
+        
         // Re-fill flags available
-        this[flagsAvailable] = this[startingFlagsVariableSymbol];
+        this[flagsAvailableSymbol] = _startingFlags;
         _flagCounterElement.textContent = this[flagsAvailable];
         
         // Populate board with new tiles
-        this[generateBoardSymbol]();
+        _generateBoard();
         
         // Start timer
-        this[beginTimerSymbol]();
+        _beginTimer();
     }
 }
 

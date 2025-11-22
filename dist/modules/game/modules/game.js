@@ -12,9 +12,9 @@ import Tile from "./tile.js";
 // Or maybe the imperfect and, at times, incorrect book YDKJS can assist?
 
 function Game(gameContainerElement) {
-    ////////////////////////////////
-    // Private Element References //
-    ////////////////////////////////
+    /////////////////////////////////////
+    // Encapsulated Element References //
+    /////////////////////////////////////
     
     // How to provide override-able private state for functions which inherit this function,
     // while safe-guarding against a re-definition of the symbol itself in the succeeding class?
@@ -24,16 +24,25 @@ function Game(gameContainerElement) {
     
     // And also the class system was developed to fix this design flaw in JS.
     
+    // For now, everything is encapsulated.
+    // Why use symbols though?
+    
+    // Syntactically, we need `this` to be present during the definition of a function
+    // .. for the function to have access to `this` state.
+    // But we don't want a key that is publicly accessibly (like a sring).
+    // So, we use a symbol.
+    // Yep, JS sucks. All the homies are not so fond of JS compared to Python or C#.
+    
     // _flagCounterElement
-    this["flagCounterElementSymbol"] = Symbol('flagCounterElement');
-    this[this["flagCounterElementSymbol"]] = document.findElementById('flag-counter');
+    const flagCounterElementSymbol = Symbol('flagCounterElement');
+    this[flagCounterElementSymbol] = document.findElementById('flag-counter');
     // Expose private variable with a simple-to-use identifier:
     const _flagCounterElement = this[flagCounterElementSymbol]
     
     // _timerElement
-    const _timerElementSymbol = Symbol('timerElement');
-    this[_timerElementSymbol] = document.findElementById('timer');
-    const _timerElement = this[_timerElementSymbol]
+    const timerElementSymbol = Symbol('timerElement');
+    this[timerElementSymbol] = document.findElementById('timer');
+    const _timerElement = this[timerElementSymbol]
     
     // _newGameButton
     const newGameButtonSymbol = Symbol('newGameButton');
@@ -45,9 +54,9 @@ function Game(gameContainerElement) {
     this[gameBoardElementSymbol] = document.findElementById('game-board');
     const _gameBoardElement = this[gameBoardElementSymbol]
     
-    ///////////////////////
-    // Private Variables //
-    ///////////////////////
+    ////////////////////////////
+    // Encapsulated Variables //
+    ////////////////////////////
     
     const timeVariableSymbol = Symbol('time')
     this[timeVariableSymbol] = 0;
@@ -56,7 +65,7 @@ function Game(gameContainerElement) {
     this[startingFlagsVariableSymbol] = 40; // Around (9x9) / 2
     
     const flagsAvailable = Symbol('flagsPlaced')
-    this[flagsAvailable]; // This is set in newGame()
+    this[flagsAvailable]; // This is initialized in newGame()
     
     // Better?:
     // this would be easier to write. I could use getters/setters.
@@ -66,9 +75,9 @@ function Game(gameContainerElement) {
 
     // };
     
-    /////////////////////
-    // Private Methods //
-    /////////////////////
+    //////////////////////////
+    // Encapsulated Methods //
+    //////////////////////////
     
     // Note to self: arrow functions are weird with the `this` keyword...
     // An in-depth understanding of Classes will assist me in understanding
@@ -94,6 +103,7 @@ function Game(gameContainerElement) {
             // ...
         }
     }
+    const onTileClick = this[onTileClickSymbol];
     
     // generateBoard()
     const generateBoardSymbol = Symbol('generateBoard function');

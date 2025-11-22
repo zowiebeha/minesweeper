@@ -67,6 +67,7 @@ body {
 h1 {
     margin-top: 2rem;
 }
+
 h2 {
     margin-bottom: 1rem;
 }
@@ -85,19 +86,6 @@ h2 {
 @font-palette-values --red-color-palette {
   color: red;
   override-colors: 2 #ffffff; /* Overriding colors at index 0 and 2 */
-}
-
-/*
-=====================
-    Content
-=====================
-*/
-
-main {
-    display: grid;
-    justify-items: center;
-    
-    padding: 2rem;
 }
 
 /*
@@ -208,8 +196,16 @@ main {
         
         margin-top: var(--container-inner-spacing);
     }
-    
-    #game-board .tile {
+}
+
+/*
+=====================
+    Tile Variants
+=====================
+*/
+
+#game-board {
+    .tile {
         width: var(--tile-size);
         height: var(--tile-size);
         
@@ -225,25 +221,19 @@ main {
         
         font-weight: bold;
         
+        font-size: 1.25rem;
+        
         &:hover {
             background: rgb(196, 196, 196);
         }
     }
-}
-
-/*
-=====================
-    Tile Variants
-=====================
-*/
-
-#game-board {
+        
     .tile.tile--flagged {
         background-image: url("./assets/img/flag.png");
     }
     
     .tile.tile--uncovered {
-        border: 1px solid grey;
+        border: 2px solid rgb(144, 144, 144);
     }
     
     .tile.tile--bombed {
@@ -261,6 +251,9 @@ main {
 =====================
 */
 
+.tile .number {
+    font-family: Arial;
+}
 .tile .number--1 {
     color: blue;
 }
@@ -281,6 +274,23 @@ main {
 }
 .tile .number--8 {
     color: darkgrey;
+}
+
+/*
+=====================
+    Content
+=====================
+*/
+
+main {
+    display: grid;
+    justify-items: center;
+    
+    padding: 2rem;
+}
+
+#game-info {
+    text-align: center;
 }
 
 /*

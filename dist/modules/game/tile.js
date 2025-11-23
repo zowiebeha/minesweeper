@@ -17,4 +17,6 @@ function Tile() {
     }
 }
 
+Object.setPrototypeOf(Tile, HTMLButtonElement);
+
 export default Tile;

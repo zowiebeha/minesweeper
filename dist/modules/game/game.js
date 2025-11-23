@@ -36,9 +36,11 @@ function Game() {
     // The amount one must consider to properly handle the `this` keyword during development
     // ... is nothing short of poor design. Classes definitely simplify things...
     
+    const fuckThis = this;
+    
     // _gameContainerElement
     const gameContainerElementSymbol = Symbol('gameContainerElement');
-    this[gameContainerElementSymbol] = document.findElementById('game-container');
+    this[gameContainerElementSymbol] = document.getElementById('game-container');
     const _gameContainerElement = this[gameContainerElementSymbol]
     
     // _flagCounterElement
@@ -102,7 +104,8 @@ function Game() {
     // showBombs()
     const showBombsSymbol = Symbol('showBombs function');
     this[showBombsSymbol] = function showBombs() {
-        for (const tileElement of this.boardElement.children) {
+        const boardElementChildren = Array.map
+        for (const tileElement of _gameBoardElement.children) {
             if (tileElement.isBomb) {
                 tileElement.classList.add('tile--bomb');
             }
@@ -166,11 +169,11 @@ function Game() {
     // generateBoard()
     const generateBoardSymbol = Symbol('generateBoard function');
     this[generateBoardSymbol] = function generateBoard() {
-        this.boardElement.innerHTML = '';
+        _gameBoardElement.innerHTML = '';
         
         for (let x = 0; x < 9; x++) {
             for (let y = 0; y < 9; y++) {
-                const newTileButton = Tile();
+                const newTileButton = new Tile();
                 
                 // Click listener
                 newTileButton.addEventListener('click', function(event) {
@@ -179,7 +182,7 @@ function Game() {
                     }
                 });
                 
-                this.boardElement.append(newTileButton);
+                _gameBoardElement.append(newTileButton);
             }
         }
     }
@@ -212,7 +215,7 @@ function Game() {
         
         // Add 1 to the timer every second.
         timerIntervalID = setInterval(function() {
-            this[timeVariableSymbol] += 1;
+            fuckThis[timeVariableSymbol] += 1;
         }, 1000);
     }
     const _beginTimer = this[beginTimerSymbol];
@@ -233,12 +236,14 @@ function Game() {
     // newGame()
     const newGameSymbol = Symbol('newGame function');
     this[newGameSymbol] = function newGame() {
+        debugger;
+        
         // Reset timer
-        this[timeVariableSymbol] = 0;
+        fuckThis[timeVariableSymbol] = 0;
         
         // Re-fill flags available
-        this[flagsAvailableVariableSymbol] = this[startingFlagsVariableSymbol];
-        _flagCounterElement.textContent = this[flagsAvailableVariableSymbol];
+        fuckThis[flagsAvailableVariableSymbol] = fuckThis[startingFlagsVariableSymbol];
+        _flagCounterElement.textContent = fuckThis[flagsAvailableVariableSymbol];
         
         // Populate board with new tiles
         _generateBoard();

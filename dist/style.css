@@ -85,7 +85,8 @@ h2 {
 
 @font-palette-values --red-color-palette {
   color: red;
-  override-colors: 2 #ffffff; /* Overriding colors at index 0 and 2 */
+  /* Overriding colors at index 0 and 2 */
+  /* override-colors: 2 #ffffff; */
 }
 
 /*
@@ -163,8 +164,8 @@ h2 {
         justify-content: space-between;
         align-items: center;
         
-        #game-header__counter,
-        #game-header__timer {
+        #flag-counter,
+        #timer {
             font-family: "14 Segment LED";
             font-palette: --red-color-palette;
             font-size: 2rem;
@@ -187,9 +188,12 @@ h2 {
     #game-board {
         display: flex;
         
+        /* Ensure width is perfect and is not squished by border or padding. */
+        box-sizing: content-box;
+        
         /* 9x9 tileset */
-        width: calc(9rem + 9 * .5rem);
-        height: calc(9rem + 9 * .5rem);
+        width: calc(var(--tile-size) * 9);
+        height: calc(var(--tile-size) * 9);
         
         border: var(--border-prop-values);
         border-color: var(--border-color-prop-values-inverted);
@@ -206,6 +210,8 @@ h2 {
 
 #game-board {
     .tile {
+        flex-shrink: 0;
+        
         width: var(--tile-size);
         height: var(--tile-size);
         
@@ -234,6 +240,10 @@ h2 {
     
     .tile.tile--uncovered {
         border: 2px solid rgb(144, 144, 144);
+        &:hover {
+            cursor: initial;
+            background: lightgrey;
+        }
     }
     
     .tile.tile--bombed {

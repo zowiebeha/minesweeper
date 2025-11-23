@@ -1,4 +1,4 @@
-import Game from './game/classes.js';
+import Game from './game/game.js';
 import removeServerAnnouncement from "./utils/removeServerAnnouncement.js";
 
 // If this module script is loaded successfully with correct CORs response headers,

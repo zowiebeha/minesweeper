@@ -17,7 +17,9 @@
     <link rel="stylesheet" href="./style.css">
 
     <!-- Scripts -->
-    <script type="module" src="./main.js"></script>
+    <link type="modulepreload" href="./modules/main.js">
+    <!-- hasn't an effect on the announcement flicker upon delete: -->
+    <script type="module" src="./modules/main.js"></script>
 
     <link rel="icon" href="./assets/img/mine.png">
 
@@ -29,18 +31,18 @@
         Please enable JavaScript for this application to work correctly.
     </noscript>
 
-    <!-- <div id="server-notice">           
-            <p>
-                For this file to run, please use a webserver such as PHP's default, Apache,
-                VSCode Live Server or others.
-            </p>
-            <p>
-                Module Scripts in JavaScript require CORs header inclusion by a web server.
-            </p>
-            <p>
-                This is to prevent a malicious <code>file://</code> protocol webpage from crawling known or guessed JavaScript filepaths.
-            </p>
-        </div> -->
+    <div id="server-notice">           
+        <p>
+            For this file to run, please use a webserver such as PHP's default, Apache,
+            VSCode Live Server or others.
+        </p>
+        <p>
+            Module Scripts in JavaScript require CORs header inclusion by a web server.
+        </p>
+        <p>
+            This is to prevent a malicious <code>file://</code> protocol webpage from crawling known or guessed JavaScript filepaths.
+        </p>
+    </div>
 
     <main>
         <article id="game-info">
@@ -99,6 +101,34 @@
             <div id="game-board">
                 <button class="tile">
                 </button>
+                
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+                
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+                
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+                
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+                
+                <button class="tile">
+                </button>
+                
+                <button class="tile tile--uncovered">
+                    <span class="number number--2">1</span>
+                </button>
+
                 <button class="tile tile--uncovered">
                     <span class="number number--2">1</span>
                 </button>

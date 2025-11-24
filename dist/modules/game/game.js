@@ -39,49 +39,32 @@ function Game() {
     const fuckThis = this;
     
     // _gameContainerElement
-    const gameContainerElementSymbol = Symbol('gameContainerElement');
-    this[gameContainerElementSymbol] = document.getElementById('game-container');
-    const _gameContainerElement = this[gameContainerElementSymbol]
+    // const gameContainerElementSymbol = Symbol('gameContainerElement');
+    // this[gameContainerElementSymbol] = document.getElementById('game-container');
+    // const _gameContainerElement = this[gameContainerElementSymbol]
     
-    // _flagCounterElement
-    const flagCounterElementSymbol = Symbol('flagCounterElement');
-    this[flagCounterElementSymbol] = _gameContainerElement.querySelector('#flag-counter');
-    // Expose private variable with a simple-to-use identifier:
-    const _flagCounterElement = this[flagCounterElementSymbol]
+    // I could use encapsulation and not understand how to implement private variables,
+    // .. or I could just use convention:
     
-    // _timerElement
-    const timerElementSymbol = Symbol('timerElement');
-    this[timerElementSymbol] = _gameContainerElement.querySelector('#timer');
-    const _timerElement = this[timerElementSymbol]
-    
-    // _newGameButton
-    const newGameButtonSymbol = Symbol('newGameButton');
-    this[newGameButtonSymbol] = _gameContainerElement.querySelector('#btn--new-game');
-    const _newGameButton = this[newGameButtonSymbol]
-    
-    // _gameBoardElement
-    const gameBoardElementSymbol = Symbol('gameBoardElement');
-    this[gameBoardElementSymbol] = _gameContainerElement.querySelector('#game-board');
-    const _gameBoardElement = this[gameBoardElementSymbol]
+    const _gameContainerElement = document.getElementById('game-container');
+    const _flagCounterElement = _gameContainerElement.querySelector('#flag-counter');
+    const _timerElement = _gameContainerElement.querySelector('#timer');
+    const _newGameButton = _gameContainerElement.querySelector('#btn--new-game');
+    const _gameBoardElement = _gameContainerElement.querySelector('#game-board');
     
     ////////////////////////////
     // Encapsulated Variables //
     ////////////////////////////
     
-    const timeVariableSymbol = Symbol('time');
-    this[timeVariableSymbol] = 0;
-    // no _time variable, as it's a number literal (pass by value, not by reference)
-    
-    const startingFlagsVariableSymbol = Symbol('startingFlags');
-    this[startingFlagsVariableSymbol] = 40; // Around (9x9) / 2
-    // no _startingFlags variable, as it's a number literal (pass by value, not by reference)
-    
+    let _time = 0;
+    const startingFlags = 40; // Around (9x9) / 2
+    let flagsAvailable; // This is initialized in newGame()
     const flagsAvailableVariableSymbol = Symbol('flagsPlaced');
-    this[flagsAvailableVariableSymbol]; // This is initialized in newGame()
-    // no _flagsAvailable variable, as it's a number literal (pass by value, not by reference)
     
     // Used to reveal adjacent tiles
-    const tileMatrix = [];
+    const tileMatrix = [
+        // ....
+    ];
     
     /*
         // Better?:
@@ -101,9 +84,7 @@ function Game() {
     // An in-depth understanding of Classes will assist me in understanding
     // ... `this`'s specification details.
     
-    // showBombs()
-    const showBombsSymbol = Symbol('showBombs function');
-    this[showBombsSymbol] = function showBombs() {
+    this._showBombs = function() {
         const boardElementChildren = Array.map
         for (const tileElement of _gameBoardElement.children) {
             if (tileElement.isBomb) {
@@ -111,19 +92,17 @@ function Game() {
             }
         }
     }
-    const _showBombs = this[showBombsSymbol];
     
-    // revealAdjacentTiles(tileElement)
-    const revealAdjacentTilesSymbol = Symbol('revealAdjacentTiles function');
-    this[revealAdjacentTilesSymbol] = function revealAdjacentTiles() {
+    this._revealAdjacentTiles = function(tileElement) {
         // ....
     }
-    const _revealAdjacentTiles = this[revealAdjacentTilesSymbol];
     
-    // onTileLeftClick()
-    const onTileLeftClickSymbol = Symbol('onTileLeftClick function');
-    this[onTileLeftClickSymbol] = function onTileLeftClick(event) {
+    this._onTileLeftClick = function(event) {
         const tileElement = event.target;
+        
+        if (tileElement.isFlagged) {
+            return;
+        }
         
         if (tileElement.isBomb) {
             tileElement.classList.add('tile--bombed');
@@ -134,11 +113,8 @@ function Game() {
         // Reveal adjacent tiles
         _revealAdjacentTiles(tileElement);
     }
-    const _onTileLeftClick = this[onTileLeftClickSymbol];
     
-    // onTileRightClick()
-    const onTileRightClickSymbol = Symbol('onTileRightClick function');
-    this[onTileRightClickSymbol] = function onTileRightClickClick(event) {
+    this._onTileRightClick = function(event) {
         // Don't open browser's context menu
         event.preventDefault();
         
@@ -164,33 +140,28 @@ function Game() {
             tileElement.addEventListener('click', _onTileLeftClick);
         }
     }
-    const _onTileRightClick = this[onTileRightClickSymbol];
     
-    // generateBoard()
-    const generateBoardSymbol = Symbol('generateBoard function');
-    this[generateBoardSymbol] = function generateBoard() {
+    this._generateBoard = function() {
         _gameBoardElement.innerHTML = '';
         
-        for (let x = 0; x < 9; x++) {
-            for (let y = 0; y < 9; y++) {
+        for (let y = 0; y < 9; y++) {
+            tileMatrix[y] = [];
+            
+            for (let x = 0; x < 9; x++) {
                 const newTileButton = new Tile();
                 
-                // Click listener
-                newTileButton.addEventListener('click', function(event) {
-                    if (newTileButton.isBomb) {
-                        tileElement.classList.add('tile--bombed');
-                    }
-                });
+                tileMatrix[y].append(newTileButton);
                 
+                // Click listener
+                newTileButton.addEventListener('click', this._onTileLeftClick);
+                
+                // Render to DOM
                 _gameBoardElement.append(newTileButton);
             }
         }
     }
-    const _generateBoard = this[generateBoardSymbol];
-    
-    // loseGame()
-    const loseGameSymbol = Symbol('loseGame function');
-    this[loseGameSymbol] = function loseGame() {
+
+    this._loseGame = function() {
         // Stop the timer
         _stopTimer();
         
@@ -203,26 +174,20 @@ function Game() {
             tile.removeEventListener('contextmenu', _onTileRightClick);
         }
     }
-    const _loseGame = this[loseGameSymbol];
     
-    // beginTimer()
     let timerIntervalID;
-    const beginTimerSymbol = Symbol('beginTimer function');
-    this[beginTimerSymbol] = function beginTimer() {
+    this._beginTimer = function() {
         if (timerIntervalID) {
             throw new Error(`A timer has already been started with ID: ${intervalID}.`);
         }
         
         // Add 1 to the timer every second.
         timerIntervalID = setInterval(function() {
-            fuckThis[timeVariableSymbol] += 1;
+            _time += 1;
         }, 1000);
     }
-    const _beginTimer = this[beginTimerSymbol];
     
-    // stopTimer()
-    const stopTimerSymbol = Symbol('stopTimer function');
-    this[stopTimerSymbol] = function stopTimer() {
+    this._stopTimer = function() {
         if (timerIntervalID === undefined) {
             throw new Error(`A timer has not been started yet.`);
         }
@@ -231,35 +196,31 @@ function Game() {
         clearInterval(timerIntervalID);
         timerIntervalID = undefined;
     }
-    const _stopTimer = this[stopTimerSymbol];
     
-    // newGame()
-    const newGameSymbol = Symbol('newGame function');
-    this[newGameSymbol] = function newGame() {
+    this._newGame = function() {
         debugger;
         
         // Reset timer
-        fuckThis[timeVariableSymbol] = 0;
+        _time = 0;
         
         // Re-fill flags available
-        fuckThis[flagsAvailableVariableSymbol] = fuckThis[startingFlagsVariableSymbol];
-        _flagCounterElement.textContent = fuckThis[flagsAvailableVariableSymbol];
+        flagsAvailable = startingFlags;
+        _flagCounterElement.textContent = flagsAvailable;
         
         // Populate board with new tiles
-        _generateBoard();
+        this._generateBoard();
         
         if (timerIntervalID === undefined) {
             // Start timer
-            _beginTimer();
+            this._beginTimer();
         }
     }
-    const _newGame = this[newGameSymbol];
     
     ////////////////////////////
     // New game event handler //
     ////////////////////////////
     
-    _newGameButton.addEventListener('click', _newGame);
+    _newGameButton.addEventListener('click', this._newGame);
 }
 
 export default Game;

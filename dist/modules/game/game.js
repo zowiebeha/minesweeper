@@ -36,8 +36,6 @@ function Game() {
     // The amount one must consider to properly handle the `this` keyword during development
     // ... is nothing short of poor design. Classes definitely simplify things...
     
-    const fuckThis = this;
-    
     // _gameContainerElement
     // const gameContainerElementSymbol = Symbol('gameContainerElement');
     // this[gameContainerElementSymbol] = document.getElementById('game-container');
@@ -46,23 +44,26 @@ function Game() {
     // I could use encapsulation and not understand how to implement private variables,
     // .. or I could just use convention:
     
+    ////////////////////////////
+    // Encapsulated Variables //
+    ////////////////////////////
+    
     const _gameContainerElement = document.getElementById('game-container');
     const _flagCounterElement = _gameContainerElement.querySelector('#flag-counter');
     const _timerElement = _gameContainerElement.querySelector('#timer');
     const _newGameButton = _gameContainerElement.querySelector('#btn--new-game');
     const _gameBoardElement = _gameContainerElement.querySelector('#game-board');
     
-    ////////////////////////////
-    // Encapsulated Variables //
-    ////////////////////////////
-    
     let _time = 0;
-    const startingFlags = 40; // Around (9x9) / 2
-    let flagsAvailable; // This is initialized in newGame()
-    const flagsAvailableVariableSymbol = Symbol('flagsPlaced');
+    const _startingFlags = 40; // Around (9x9) / 2
+    let _flagsAvailable; // This is initialized in newGame()
+    
+    //////////////////////
+    // Public Variables //
+    //////////////////////
     
     // Used to reveal adjacent tiles
-    const tileMatrix = [
+    this.tileMatrix = [
         // ....
     ];
     
@@ -85,33 +86,24 @@ function Game() {
     // ... `this`'s specification details.
     
     this._showBombs = function() {
-        const boardElementChildren = Array.map
-        for (const tileElement of _gameBoardElement.children) {
-            if (tileElement.isBomb) {
+        // Remove TextNodes from the list of boardElement children:
+        const boardElementTiles = Array.prototype.filter.call(
+            _gameBoardElement.children,
+            (child) => child.nodeType !== Node.TEXT_NODE
+        );
+        
+        for (const tileElement of boardElementTiles) {
+            if (tileElement.isBomb && !tileElement.isRevealed) {
                 tileElement.classList.add('tile--bomb');
             }
         }
     }
     
-    this._revealAdjacentTiles = function(tileElement) {
-        // ....
-    }
-    
     this._onTileLeftClick = function(event) {
         const tileElement = event.target;
         
-        if (tileElement.isFlagged) {
-            return;
-        }
-        
-        if (tileElement.isBomb) {
-            tileElement.classList.add('tile--bombed');
-            
-            _loseGame();
-        }
-        
-        // Reveal adjacent tiles
-        _revealAdjacentTiles(tileElement);
+        // Will also reveal adjacent tiles if they are empty
+        tileElement.reveal();
     }
     
     this._onTileRightClick = function(event) {
@@ -121,8 +113,9 @@ function Game() {
         const tileElement = event.target;
         
         // We shouldn't be able to flag a revealed tile.
-        if (tileElement.isRevealed)
+        if (tileElement.isRevealed) {
             return;
+        }
         
         tileElement.toggleFlag();
         
@@ -130,14 +123,14 @@ function Game() {
         if (tileElement.isFlagged) {
             this._flagsAvailable -= 1;
             
-            // Prevent accidental left-click of a flagged tile:
-            tileElement.removeEventListener('click', _onTileLeftClick);
+            // Prevent ability to reveal a flagged tile:
+            tileElement.removeEventListener('click', this._onTileLeftClick);
         }
         else {
             this._flagsAvailable += 1;
             
-            // Enable left-click again, as we've removed the flag:
-            tileElement.addEventListener('click', _onTileLeftClick);
+            // Enable ability to reveal an unflagged tile:
+            tileElement.addEventListener('click', this._onTileLeftClick);
         }
     }
     
@@ -148,7 +141,7 @@ function Game() {
             tileMatrix[y] = [];
             
             for (let x = 0; x < 9; x++) {
-                const newTileButton = new Tile();
+                const newTileButton = new Tile(this);
                 
                 tileMatrix[y].append(newTileButton);
                 
@@ -204,7 +197,7 @@ function Game() {
         _time = 0;
         
         // Re-fill flags available
-        flagsAvailable = startingFlags;
+        _flagsAvailable = _startingFlags;
         _flagCounterElement.textContent = flagsAvailable;
         
         // Populate board with new tiles

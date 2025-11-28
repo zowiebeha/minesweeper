@@ -1,6 +1,10 @@
 function Tile(gameReference) {
     this._gameReference = gameReference;
     
+    if (!Tile.gameReference) {
+        Tile.gameReference = gameReference;
+    }
+    
     this.isRevealed = false;
     this.isFlagged = false;
     
@@ -19,6 +23,25 @@ function Tile(gameReference) {
         this.classList.toggle('tile--flagged');
     };
     
+    this.getCoordinates = function() {
+            let tileX, tileY;
+            const matrix = this.gameReference.tileMatrix;
+            for (let x=0; x < matrix.length; x++) {
+                for (let y=0; y < matrix[x].length; y++) {
+                    if (matrix[x][y] === this) {
+                        tileX = x;
+                        tileY = y;
+                    }
+                }
+            }
+            
+            if (!tileX || !tileY) {
+                throw new Error('Tile not found in matrix');
+            }
+            
+            return [tileX, tileY];
+    }
+    
     this.reveal = function () {
         this.isRevealed = true;
         
@@ -30,13 +53,43 @@ function Tile(gameReference) {
         else {
             this.classList.toggle('tile--reveal');
             
-            // recursively reveal based on tile matrix
-            // ...
-            // this._gameReference.tileMatrix
+            const [tileX, tileY] = this.getCoordinates();
+            
+            // Might be null if out of index is out of bounds.
+            // Nullish checks below will properly handle that case.
+            const tileAbove = Tile.getTileAt(tileX, tileY - 1);
+            const tileBelow = Tile.getTileAt(tileX, tileY + 1);
+            const tileLeft = Tile.getTileAt(tileX - 1, tileY);
+            const tileRight = Tile.getTileAt(tileX + 1, tileY);
+            
+            // Don't trigger bombs around the revealed tile
+            if (!tileAbove?.isBomb) {
+                tileAbove.reveal();
+            }
+            if (!tileBelow?.isBomb) {
+                tileBelow.reveal();
+            }
+            if (!tileLeft?.isBomb) {
+                tileLeft.reveal();
+            }
+            if (!tileRight?.isBomb) {
+                tileRight.reveal();
+            }
         }
     };
 }
 
 Object.setPrototypeOf(Tile, HTMLButtonElement);
+
+// Static method
+Tile.getTileAt = function(x, y) {
+    if (!Tile.gameReference) {
+        throw new Error("An instance of the Tile must be made for the Tile Function's gameReference to be created.");
+    }
+    
+    const matrix = this.gameReference.tileMatrix;
+    
+    return matrix[x][y];    
+}
 
 export default Tile;

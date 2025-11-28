@@ -141,6 +141,7 @@ function Game() {
             tileMatrix[y] = [];
             
             for (let x = 0; x < 9; x++) {
+                // Pass a reference of this Game instance to the Tile
                 const newTileButton = new Tile(this);
                 
                 tileMatrix[y].append(newTileButton);

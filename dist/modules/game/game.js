@@ -41,6 +41,10 @@ function Game() {
     // this[gameContainerElementSymbol] = document.getElementById('game-container');
     // const _gameContainerElement = this[gameContainerElementSymbol]
     
+    // In JS, we only get encapsulation privacy, convention-based privacy (this._<name>), and
+    // ... again convention-based privacy (this.private = {...}, this.public = {...}).
+    // That is, until fake classes were added.
+    
     // I could use encapsulation and not understand how to implement private variables,
     // .. or I could just use convention:
     
@@ -207,7 +211,7 @@ function Game() {
         _flagCounterElement.textContent = String(_flagsAvailable).padStart(3, "0");
         
         // Populate board with new tiles
-        // fuckThis._generateBoard();
+        fuckThis._generateBoard();
         
         if (timerIntervalID === undefined) {
             // Start timer

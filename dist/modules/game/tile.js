@@ -11,6 +11,10 @@ function Tile(gameReference) {
     // Todo: I'll implement a better algorithm after the assignment.
     this.isBomb = Math.random() > Math.random();
     
+    if (!this.prototype.classList) {
+        throw new Error("Tile's inheritance of HTMLButtonElement failed.");
+    }
+    
     // Setup tile style 😎
     this.classList.add('tile');
     
@@ -79,7 +83,9 @@ function Tile(gameReference) {
     };
 }
 
-Object.setPrototypeOf(Tile, HTMLButtonElement);
+Object.setPrototypeOf(Tile.prototype, HTMLButtonElement);
+
+console.log(Tile.prototype,Tile.prototype.prototype)
 
 // Static method
 Tile.getTileAt = function(x, y) {

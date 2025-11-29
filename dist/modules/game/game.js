@@ -54,7 +54,10 @@ function Game() {
     const _newGameButton = _gameContainerElement.querySelector('#btn--new-game');
     const _gameBoardElement = _gameContainerElement.querySelector('#game-board');
     
-    let _time = 0;
+    // JavaScript is an insane language made for the mentally deranged:
+    const fuckThis = this;
+    
+    let _currentTime = 0;
     const _startingFlags = 40; // Around (9x9) / 2
     let _flagsAvailable; // This is initialized in newGame()
     
@@ -121,16 +124,16 @@ function Game() {
         
         // Add or subtract a tile depending on the tile state
         if (tileElement.isFlagged) {
-            this._flagsAvailable -= 1;
+            _flagsAvailable -= 1;
             
             // Prevent ability to reveal a flagged tile:
-            tileElement.removeEventListener('click', this._onTileLeftClick);
+            tileElement.removeEventListener('click', fuckThis._onTileLeftClick);
         }
         else {
-            this._flagsAvailable += 1;
+            _flagsAvailable += 1;
             
             // Enable ability to reveal an unflagged tile:
-            tileElement.addEventListener('click', this._onTileLeftClick);
+            tileElement.addEventListener('click', fuckThis._onTileLeftClick);
         }
     }
     
@@ -138,16 +141,16 @@ function Game() {
         _gameBoardElement.innerHTML = '';
         
         for (let y = 0; y < 9; y++) {
-            tileMatrix[y] = [];
+            this.tileMatrix[y] = [];
             
             for (let x = 0; x < 9; x++) {
                 // Pass a reference of this Game instance to the Tile
-                const newTileButton = new Tile(this);
+                const newTileButton = new Tile(fuckThis);
                 
                 tileMatrix[y].append(newTileButton);
                 
                 // Click listener
-                newTileButton.addEventListener('click', this._onTileLeftClick);
+                newTileButton.addEventListener('click', fuckThis._onTileLeftClick);
                 
                 // Render to DOM
                 _gameBoardElement.append(newTileButton);
@@ -157,7 +160,7 @@ function Game() {
 
     this._loseGame = function() {
         // Stop the timer
-        _stopTimer();
+        fuckThis._stopTimer();
         
         // Prevent tile interaction:
         for (const tile of _gameBoardElement) {
@@ -177,7 +180,9 @@ function Game() {
         
         // Add 1 to the timer every second.
         timerIntervalID = setInterval(function() {
-            _time += 1;
+            _currentTime += 1;
+            // is there a gotcha with String(...), or was it new String(...)? (or instead Number?)
+            _timerElement.textContent = String(_currentTime).padStart(3, "0");
         }, 1000);
     }
     
@@ -195,18 +200,18 @@ function Game() {
         debugger;
         
         // Reset timer
-        _time = 0;
+        _currentTime = 0;
         
         // Re-fill flags available
         _flagsAvailable = _startingFlags;
-        _flagCounterElement.textContent = flagsAvailable;
+        _flagCounterElement.textContent = String(_flagsAvailable).padStart(3, "0");
         
         // Populate board with new tiles
-        this._generateBoard();
+        // fuckThis._generateBoard();
         
         if (timerIntervalID === undefined) {
             // Start timer
-            this._beginTimer();
+            fuckThis._beginTimer();
         }
     }
     
@@ -214,7 +219,7 @@ function Game() {
     // New game event handler //
     ////////////////////////////
     
-    _newGameButton.addEventListener('click', this._newGame);
+    _newGameButton.addEventListener('click', fuckThis._newGame);
 }
 
 export default Game;

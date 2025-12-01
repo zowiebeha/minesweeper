@@ -187,6 +187,7 @@ h2 {
     
     #game-board {
         display: flex;
+        flex-wrap: wrap;
         
         /* Ensure width is perfect and is not squished by border or padding. */
         box-sizing: content-box;

@@ -1,4 +1,4 @@
-import Tile from "./tile.js";
+import Tile from "./tileNew.js";
 
 // Prototypal inheritance is very verbose when it comes to
 // ... mimicking the object-oriented requirements of complexity.
@@ -107,10 +107,16 @@ function Game() {
     }
     
     this._onTileLeftClick = function(event) {
-        const tileElement = event.target;
+        const buttonElement = event.target;
+        debugger;
+        
+        // search for associated tile data in the matrix:
+        const tile = this.tileMatrix.filter(
+            (tile) => tile.buttonElement === buttonElement
+        );
         
         // Will also reveal adjacent tiles if they are empty
-        tileElement.reveal();
+        tile.reveal();
     }
     
     this._onTileRightClick = function(event) {
@@ -149,15 +155,15 @@ function Game() {
             
             for (let x = 0; x < 9; x++) {
                 // Pass a reference of this Game instance to the Tile
-                const newTileButton = new Tile(fuckThis);
+                const newTile = Tile(fuckThis);
                 
-                tileMatrix[y].append(newTileButton);
+                this.tileMatrix[y].push(newTile);
                 
                 // Click listener
-                newTileButton.addEventListener('click', fuckThis._onTileLeftClick);
+                newTile.buttonElement.addEventListener('click', fuckThis._onTileLeftClick);
                 
                 // Render to DOM
-                _gameBoardElement.append(newTileButton);
+                _gameBoardElement.append(newTile.buttonElement);
             }
         }
     }
@@ -201,8 +207,6 @@ function Game() {
     }
     
     this._newGame = function() {
-        debugger;
-        
         // Reset timer
         _currentTime = 0;
         

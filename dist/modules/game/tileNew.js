@@ -1,35 +1,38 @@
 function Tile(gameReference) {
-    this._gameReference = gameReference;
-    
-    if (!Tile.gameReference) {
-        Tile.gameReference = gameReference;
+    if (new.target) {
+        throw new Error("Tile should be called with regular invocation, not constructor instantiation.");
     }
     
-    this.isRevealed = false;
-    this.isFlagged = false;
     
-    // Todo: I'll implement a better algorithm after the assignment.
-    this.isBomb = Math.random() > Math.random();
-    
-    if (!this.classList) {
-        throw new Error("Tile's inheritance of HTMLButtonElement failed.");
+    if (!gameReference) {
+        throw new Error("gameReference argument required to invoke Tile function.")
     }
     
+    const properties = {};
+    
+    properties.gameReference = gameReference;
+    
+    properties.buttonElement = document.createElement('button');
     // Setup tile style 😎
-    this.classList.add('tile');
+    properties.buttonElement.classList.add('tile');
     
-    this.toggleFlag = function() {
+    properties.isRevealed = false;
+    properties.isFlagged = false;
+    // Todo: I'll implement a better algorithm after the assignment.
+    properties.isBomb = Math.random() > Math.random();
+
+    properties.toggleFlag = function() {
         if (isRevealed) {
             throw new Error("Cannot toggle flag for a revealed tile!")
         }
         
-        this.isFlagged = !this.isFlagged;
-        this.classList.toggle('tile--flagged');
+        properties.isFlagged = !properties.isFlagged;
+        properties.buttonElement.classList.toggle('tile--flagged');
     };
     
-    this.getCoordinates = function() {
+    properties.getCoordinates = function() {
             let tileX, tileY;
-            const matrix = this.gameReference.tileMatrix;
+            const matrix = Tile.gameReference.tileMatrix;
             for (let x=0; x < matrix.length; x++) {
                 for (let y=0; y < matrix[x].length; y++) {
                     if (matrix[x][y] === this) {
@@ -46,18 +49,18 @@ function Tile(gameReference) {
             return [tileX, tileY];
     }
     
-    this.reveal = function () {
-        this.isRevealed = true;
+    properties.reveal = function () {
+        properties.isRevealed = true;
         
-        if (tileElement.isBomb) {
-            tileElement.classList.add('tile--bombed');
+        if (properties.buttonElement.isBomb) {
+            properties.buttonElement.classList.add('tile--bombed');
             
-            this._gameReference._loseGame();
+            properties.gameReference._loseGame();
         }
         else {
-            this.classList.toggle('tile--reveal');
+            properties.buttonElement.classList.toggle('tile--reveal');
             
-            const [tileX, tileY] = this.getCoordinates();
+            const [tileX, tileY] = properties.getCoordinates();
             
             // Might be null if out of index is out of bounds.
             // Nullish checks below will properly handle that case.
@@ -81,23 +84,14 @@ function Tile(gameReference) {
             }
         }
     };
-}
-
-// I need to re-learn prototypal inheritance
-Object.setPrototypeOf(
-    Tile,
-    Object.getPrototypeOf(HTMLButtonElement)
-);
-
-// Static method
-Tile.getTileAt = function(x, y) {
-    if (!Tile.gameReference) {
-        throw new Error("An instance of the Tile must be made for the Tile Function's gameReference to be created.");
+    
+    properties.getTileAt = function(x, y) {
+        const matrix = properties.gameReference.tileMatrix;
+        
+        return matrix[x][y];    
     }
     
-    const matrix = this.gameReference.tileMatrix;
-    
-    return matrix[x][y];    
+    return properties;
 }
 
 export default Tile;

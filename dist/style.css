@@ -235,16 +235,17 @@ h2 {
         }
     }
         
-    .tile.tile--flagged {
-        background-image: url("./assets/img/flag.png");
-    }
     
-    .tile.tile--uncovered {
+    .tile.tile--revealed {
         border: 2px solid rgb(144, 144, 144);
         &:hover {
             cursor: initial;
             background: lightgrey;
         }
+    }
+    
+    .tile.tile--flagged {
+        background-image: url("./assets/img/flag.png");
     }
     
     .tile.tile--bombed {

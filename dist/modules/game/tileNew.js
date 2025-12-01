@@ -57,13 +57,13 @@ function Tile(gameReference) {
     properties.reveal = function () {
         properties.isRevealed = true;
         
-        if (properties.buttonElement.isBomb) {
+        if (properties.isBomb) {
             properties.buttonElement.classList.add('tile--bombed');
             
             properties.gameReference._loseGame();
         }
         else {
-            properties.buttonElement.classList.toggle('tile--reveal');
+            properties.buttonElement.classList.toggle('tile--revealed');
             
             const [tileX, tileY] = properties.getCoordinates();
             
@@ -73,8 +73,6 @@ function Tile(gameReference) {
             const tileBelow = properties.getTileAt(tileX, tileY + 1);
             const tileLeft = properties.getTileAt(tileX - 1, tileY);
             const tileRight = properties.getTileAt(tileX + 1, tileY);
-            
-            debugger;
             
             // Don't trigger bombs around the revealed tile
             // == or === works against undefined, since undefined ==[=] undefined and to null, but to no other type.
@@ -90,6 +88,25 @@ function Tile(gameReference) {
             if (tileRight?.isBomb === false) {
                 tileRight.reveal();
             }
+            
+            const diagonalAdjacentTiles = [
+                properties.getTileAt(tileX - 1, tileY - 1), // top left
+                properties.getTileAt(tileX + 1, tileY - 1), // top right
+                properties.getTileAt(tileX + 1, tileY + 1), // bottom right
+                properties.getTileAt(tileX - 1, tileY + 1), // bottom left
+            ];
+            
+            // we could optimize this by calculating it first when the board is generated...
+            let adjacentBombCount = 0;
+            for (const tile of diagonalAdjacentTiles) {
+                if (tile.isBomb) {
+                    adjacentBombCount++;
+                }
+            }
+            
+            // Set visual for number of bombs adjacent to tile
+            properties.buttonElement.classList.add(`number--${adjacentBombCount}`);
+            properties.buttonElement.textContent = adjacentBombCount;
         }
     };
     

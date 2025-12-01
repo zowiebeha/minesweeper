@@ -52,10 +52,14 @@ function Game() {
     // Encapsulated Variables //
     ////////////////////////////
     
+    const _GAME_OVER_IMG_PATH = "./assets/img/game_over.png";
+    const _NEW_GAME_IMG_PATH = "./assets/img/game_good.png";
+    
     const _gameContainerElement = document.getElementById('game-container');
     const _flagCounterElement = _gameContainerElement.querySelector('#flag-counter');
     const _timerElement = _gameContainerElement.querySelector('#timer');
     const _newGameButton = _gameContainerElement.querySelector('#btn--new-game');
+    const _newGameButtonImage = _newGameButton.querySelector('.icon');
     const _gameBoardElement = _gameContainerElement.querySelector('#game-board');
     
     // JavaScript is an insane language made for the mentally deranged:
@@ -179,13 +183,19 @@ function Game() {
         // Stop the timer
         fuckThis._stopTimer();
         
+        // Update new game button icon
+        _newGameButtonImage.setAttribute('src', _GAME_OVER_IMG_PATH);
+        _newGameButtonImage.setAttribute('alt', "frowning face with x characters as eyes");
+        
         // Prevent tile interaction:
-        for (const tile of _gameBoardElement) {
-            // Disable left-click handling
-            tile.removeEventListener('click', fuckThis._onTileLeftClick);
-            
-            // Disable right-click handling
-            tile.removeEventListener('contextmenu', fuckThis._onTileRightClick);
+        for (const row of this.tileMatrix) {
+            for (const tile of row) {
+                // Disable left-click handling
+                tile.buttonElement.removeEventListener('click', fuckThis._onTileLeftClick);
+                
+                // Disable right-click handling
+                tile.buttonElement.removeEventListener('contextmenu', fuckThis._onTileRightClick);
+            }
         }
     }
     
@@ -220,6 +230,13 @@ function Game() {
         // Re-fill flags available
         _flagsAvailable = _startingFlags;
         _flagCounterElement.textContent = String(_flagsAvailable).padStart(3, "0");
+        
+        // If the player lost that round, update the new game button image
+        // == or ===?
+        if (_newGameButtonImage.getAttribute('src') == _GAME_OVER_IMG_PATH) {
+            _newGameButtonImage.setAttribute('src', _NEW_GAME_IMG_PATH);
+            _newGameButtonImage.setAttribute('alt', "smiley face");
+        }
         
         // Populate board with new tiles
         fuckThis._generateBoard();

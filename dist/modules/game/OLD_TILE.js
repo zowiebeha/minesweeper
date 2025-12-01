@@ -32,6 +32,9 @@ function Tile(gameReference) {
             const matrix = this.gameReference.tileMatrix;
             for (let x=0; x < matrix.length; x++) {
                 for (let y=0; y < matrix[x].length; y++) {
+                    
+                    console.log(matrix[x], matrix[x][y], matrix[x][y] === this);
+                    
                     if (matrix[x][y] === this) {
                         tileX = x;
                         tileY = y;

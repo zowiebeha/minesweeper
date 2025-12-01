@@ -107,13 +107,20 @@ function Game() {
     }
     
     this._onTileLeftClick = function(event) {
-        const buttonElement = event.target;
-        debugger;
+        const clickedButtonElement = event.target;
         
         // search for associated tile data in the matrix:
-        const tile = this.tileMatrix.filter(
-            (tile) => tile.buttonElement === buttonElement
-        );
+        let tile;
+        for (const row of fuckThis.tileMatrix) {
+            tile = tile || row.filter(
+                (tileInstance) => tileInstance.buttonElement === clickedButtonElement
+            )[0];
+            
+            // Tile found
+            if (tile) {
+                break;
+            }
+        }
         
         // Will also reveal adjacent tiles if they are empty
         tile.reveal();
@@ -175,10 +182,10 @@ function Game() {
         // Prevent tile interaction:
         for (const tile of _gameBoardElement) {
             // Disable left-click handling
-            tile.removeEventListener('click', _onTileLeftClick);
+            tile.removeEventListener('click', fuckThis._onTileLeftClick);
             
             // Disable right-click handling
-            tile.removeEventListener('contextmenu', _onTileRightClick);
+            tile.removeEventListener('contextmenu', fuckThis._onTileRightClick);
         }
     }
     

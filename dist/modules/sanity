@@ -1,7 +1,29 @@
+To learn:
+
+Prototypal Inheritence
+    * Why am I having trouble making an HTMLButtonElement of my own via prototypes?
+    * this keyword is bad design
+    * prototypes are bad design for an object-oriented ecosystem (which the browser APIs are)
+    
 Classes (definitely)
-
+    * Required to make more complex systems that prototypal inheritence cannot create
+    * Required to understand the modules page
+    * Required to understand the `this` keyword in its entirety
+    
 Web components (definitely)
+    * Required to understand frameworks
+    
+Asyncronous JavaScript
+    * Required to fully understand the modules page
+    * Required for a performant application
+    * Required for applications of great complexity
 
-React (probably)
+React
+    * A custom framework would do for a small app
+    * Learn how existing frameworks operate before making one that does away with the bad and which keeps the good
 
-Without these, JS is... AHHHH
+Without these, JS is... AHHHH.
+    * Unmaintainable
+    * Poorly designed (still is even with these)
+    * Not meant for complexity
+    * Has learning resources that mainly constitute of poor writings as a result of JavaScript's poor design

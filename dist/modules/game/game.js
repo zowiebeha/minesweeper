@@ -96,35 +96,41 @@ function Game() {
     // An in-depth understanding of Classes will assist me in understanding
     // ... `this`'s specification details.
     
+    this._checkWinCondition = function() {
+        // for (const tileElement of fuckThis.tileMatrix) {
+        //     const tile = fuckThis._findTileFromButton(tileElement);
+            
+        //     const tilesInMatrix =
+        //     const revealedTiles = 
+        //     const bombTiles = 
+            
+        //     // all safe tiles have been revealed. you win!!
+        //     if (revealedTiles.length + bombTiles.length == tilesInMatrix) {
+        //         // you win
+        //     }
+        // }
+    }
+    
     this._showBombs = function() {
-        // Remove TextNodes from the list of boardElement children:
-        const boardElementTiles = Array.prototype.filter.call(
-            _gameBoardElement.children,
-            (child) => child.nodeType !== Node.TEXT_NODE
-        );
-        
-        for (const tileElement of boardElementTiles) {
-            if (tileElement.isBomb && !tileElement.isRevealed) {
+        for (const tileElement of fuckThis.tileMatrix) {
+            const tile = fuckThis._findTileFromButton(tileElement);
+            
+            if (tile.isBomb && !tile.isRevealed) {
                 tileElement.classList.add('tile--bomb');
             }
         }
     }
     
     this._onTileLeftClick = function(event) {
+        // Begin timer on first click
+        if (timerIntervalID === undefined) {
+            // Start timer
+            fuckThis._beginTimer();
+        }
+        
         const clickedButtonElement = event.target;
         
-        // search for associated tile data in the matrix:
-        let tile;
-        for (const row of fuckThis.tileMatrix) {
-            tile = tile || row.filter(
-                (tileInstance) => tileInstance.buttonElement === clickedButtonElement
-            )[0];
-            
-            // Tile found
-            if (tile) {
-                break;
-            }
-        }
+        const tile = fuckThis._findTileFromButton(clickedButtonElement);
         
         // Will also reveal adjacent tiles if they are empty
         tile.reveal();
@@ -136,26 +142,47 @@ function Game() {
         
         const tileElement = event.target;
         
+        const tile = fuckThis._findTileFromButton(tileElement);
+        
         // We shouldn't be able to flag a revealed tile.
-        if (tileElement.isRevealed) {
+        if (tile.isRevealed) {
             return;
         }
         
-        tileElement.toggleFlag();
+        tile.toggleFlag();
         
         // Add or subtract a tile depending on the tile state
-        if (tileElement.isFlagged) {
+        if (tile.isFlagged) {
             _flagsAvailable -= 1;
+            _flagCounterElement.textContent = String(_flagsAvailable).padStart(3, '0');
             
             // Prevent ability to reveal a flagged tile:
             tileElement.removeEventListener('click', fuckThis._onTileLeftClick);
         }
         else {
             _flagsAvailable += 1;
+            _flagCounterElement.textContent = String(_flagsAvailable).padStart(3, '0');
             
             // Enable ability to reveal an unflagged tile:
             tileElement.addEventListener('click', fuckThis._onTileLeftClick);
         }
+    }
+    
+    this._findTileFromButton = function(tileButtonElement) {
+        // search for associated tile data in the matrix:
+        let tile;
+        for (const row of fuckThis.tileMatrix) {
+            tile = tile || row.filter(
+                (tileInstance) => tileInstance.buttonElement === tileButtonElement
+            )[0];
+            
+            // Tile found
+            if (tile) {
+                break;
+            }
+        }
+        
+        return tile;
     }
     
     this._generateBoard = function() {
@@ -172,6 +199,7 @@ function Game() {
                 
                 // Click listener
                 newTile.buttonElement.addEventListener('click', fuckThis._onTileLeftClick);
+                newTile.buttonElement.addEventListener('contextmenu', fuckThis._onTileRightClick);
                 
                 // Render to DOM
                 _gameBoardElement.append(newTile.buttonElement);
@@ -224,8 +252,14 @@ function Game() {
     }
     
     this._newGame = function() {
+        // Stop timer from counting up, since that is to occur on first tile interaction.
+        if (timerIntervalID) {
+            fuckThis._stopTimer();
+        }
+        
         // Reset timer
         _currentTime = 0;
+        _timerElement.textContent = String(_currentTime).padStart(3, "0");
         
         // Re-fill flags available
         _flagsAvailable = _startingFlags;
@@ -240,11 +274,6 @@ function Game() {
         
         // Populate board with new tiles
         fuckThis._generateBoard();
-        
-        if (timerIntervalID === undefined) {
-            // Start timer
-            fuckThis._beginTimer();
-        }
     }
     
     ////////////////////////////
@@ -252,6 +281,12 @@ function Game() {
     ////////////////////////////
     
     _newGameButton.addEventListener('click', fuckThis._newGame);
+    
+
+    ////////////////////////////////
+    // New instance functionality //
+    ////////////////////////////////
+    this._newGame();
 }
 
 export default Game;

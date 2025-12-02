@@ -19,10 +19,10 @@ function Tile(gameReference) {
     properties.isRevealed = false;
     properties.isFlagged = false;
     // Todo: I'll implement a better algorithm after the assignment.
-    properties.isBomb = Math.random() > Math.random();
-
+    properties.isBomb = Math.random() < Math.random() / 3;
+    
     properties.toggleFlag = function() {
-        if (isRevealed) {
+        if (properties.isRevealed) {
             throw new Error("Cannot toggle flag for a revealed tile!")
         }
         
@@ -55,10 +55,18 @@ function Tile(gameReference) {
     }
     
     properties.reveal = function () {
+        // Don't reveal already revealed adjacent tiles
+        if (properties.isRevealed) {
+            return;
+        }
+        
         properties.isRevealed = true;
         
         if (properties.isBomb) {
             properties.buttonElement.classList.add('tile--bombed');
+            
+            // Show other bombs
+            properties.gameReference._showBombs();
             
             properties.gameReference._loseGame();
         }
@@ -68,28 +76,17 @@ function Tile(gameReference) {
             const [tileX, tileY] = properties.getCoordinates();
             
             // Might be null if out of index is out of bounds.
-            // Nullish checks below will properly handle that case.
+            // Nullish checks for reveals will properly handle that case.
             const tileAbove = properties.getTileAt(tileX, tileY - 1);
             const tileBelow = properties.getTileAt(tileX, tileY + 1);
             const tileLeft = properties.getTileAt(tileX - 1, tileY);
             const tileRight = properties.getTileAt(tileX + 1, tileY);
             
-            // Don't trigger bombs around the revealed tile
-            // == or === works against undefined, since undefined ==[=] undefined and to null, but to no other type.
-            if (tileAbove?.isBomb === false) {
-                tileAbove.reveal();
-            }
-            if (tileBelow?.isBomb === false) {
-                tileBelow.reveal();
-            }
-            if (tileLeft?.isBomb === false) {
-                tileLeft.reveal();
-            }
-            if (tileRight?.isBomb === false) {
-                tileRight.reveal();
-            }
-            
-            const diagonalAdjacentTiles = [
+            const adjacentTiles = [
+                tileAbove,
+                tileBelow,
+                tileLeft,
+                tileRight,
                 properties.getTileAt(tileX - 1, tileY - 1), // top left
                 properties.getTileAt(tileX + 1, tileY - 1), // top right
                 properties.getTileAt(tileX + 1, tileY + 1), // bottom right
@@ -98,15 +95,39 @@ function Tile(gameReference) {
             
             // we could optimize this by calculating it first when the board is generated...
             let adjacentBombCount = 0;
-            for (const tile of diagonalAdjacentTiles) {
-                if (tile.isBomb) {
-                    adjacentBombCount++;
+            for (const tile of adjacentTiles) {
+                // Sometimes an adjacent tile might not exist if it would be beyond the game board:
+                if (tile) {
+                    if (tile.isBomb) {
+                        adjacentBombCount++;
+                    }
                 }
             }
             
-            // Set visual for number of bombs adjacent to tile
-            properties.buttonElement.classList.add(`number--${adjacentBombCount}`);
-            properties.buttonElement.textContent = adjacentBombCount;
+            // Reveal unless a bomb is adjacent.
+            // This prevents one click from revealing the whole board apart from mines
+            // ... and safe tiles surrounded by mines.
+            if (adjacentBombCount == 0) {                
+                // Don't trigger bombs around the revealed tile
+                // == or === works against undefined, since undefined ==[=] undefined and to null, but to no other type.
+                if (tileAbove?.isBomb === false) {
+                    tileAbove.reveal();
+                }
+                if (tileBelow?.isBomb === false) {
+                    tileBelow.reveal();
+                }
+                if (tileLeft?.isBomb === false) {
+                    tileLeft.reveal();
+                }
+                if (tileRight?.isBomb === false) {
+                    tileRight.reveal();
+                }
+            }
+            else if (adjacentBombCount > 0) {
+                // Set visual for number of bombs adjacent to tile
+                properties.buttonElement.classList.add(`number--${adjacentBombCount}`);
+                properties.buttonElement.textContent = adjacentBombCount;
+            }
         }
     };
     

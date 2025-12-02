@@ -32,23 +32,14 @@ html {
 body {
     height: 100%;
     
-    --background-tile-area: 20px;
+    --background-tile-area: 1rem;
+    --tile-color-dark: rgba(181, 180, 176, 0.177);
+    --tile-color-light: rgb(226, 226, 224);
     
-    background-color: black;
-    
-    /* --color-1: */
-    background-image:
-      repeating-linear-gradient(45deg, black 25px, transparent 25px, 
-    transparent 75px, black 75px, black),
-  repeating-linear-gradient(45deg, black 25px, transparent 25px, 
-    transparent 75px, black 75px, black),
-    /* repeating-linear-gradient(90deg, transparent, transparent 10px, white 10px, white 20px),
-    repeating-linear-gradient(grey, grey 10px, transparent 10px, transparent 20px), */
-    /* repeating-linear-gradient(blue, blue 10px, transparent 10px, transparent 20px), */
-    /* repeating-linear-gradient(90deg, green, green 10px, yellow 10px, yellow 20px), */
-        linear-gradient(transparent, transparent);
-        /* repeating-linear-gradient(0.25turn, transparent, #3f87a6 20px); */
-    background: rgb(247, 247, 247);
+    background: 
+        conic-gradient(var(--tile-color-light) 0deg, 90deg, var(--tile-color-dark) 90deg, 180deg, var(--tile-color-light) 180deg, 270deg, var(--tile-color-dark) 270deg, 360deg, var(--tile-color-light) 360deg),
+        rgb(247, 247, 247);
+    background-size: var(--background-tile-area) var(--background-tile-area);
 }
 
 .noscript {
@@ -118,6 +109,7 @@ h2 {
 */
 
 #game-container {
+    background: rgb(204, 204, 204);
     order: -1;
     
     /* == Variables == */
@@ -172,6 +164,7 @@ h2 {
         }
         
         #btn--new-game {
+            background: rgb(204, 204, 204);
             height: calc(var(--tile-size) * 2);
             width: calc(var(--tile-size) * 2);
             
@@ -246,14 +239,21 @@ h2 {
     
     .tile.tile--flagged {
         background-image: url("./assets/img/flag.png");
+        background-size: cover; /* why do we need this? maybe because the image is too large? */
     }
     
     .tile.tile--bombed {
-        background: red;
+        background: rgb(237, 57, 57);
+        background-image: url("./assets/img/mine.png");
+        background-size: cover;
+        background-repeat: no-repeat;
     }
     
     .tile.tile--bomb {
-        background: black;
+        background: rgb(138, 125, 125);
+        background-image: url("./assets/img/mine.png");
+        background-size: cover;
+        background-repeat: no-repeat;
     }
 }
 
@@ -263,28 +263,28 @@ h2 {
 =====================
 */
 
-.tile .number {
+.tile.number {
     font-family: Arial;
 }
-.tile .number--1 {
+.tile.number--1 {
     color: blue;
 }
-.tile .number--2 {
+.tile.number--2 {
     color: green;
 }
-.tile .number--3 {
+.tile.number--3 {
     color: red;
 }
-.tile .number--4 {
+.tile.number--4 {
     color: darkblue;
 }
-.tile .number--5 {
+.tile.number--5 {
     color: darkred;
 }
-.tile .number--6 {
+.tile.number--6 {
     color: cyan;
 }
-.tile .number--8 {
+.tile.number--8 {
     color: darkgrey;
 }
 

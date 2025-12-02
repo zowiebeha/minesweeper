@@ -65,12 +65,12 @@ function Tile(gameReference) {
         if (properties.isBomb) {
             properties.buttonElement.classList.add('tile--bombed');
             
-            // Show other bombs
-            properties.gameReference._showBombs();
-            
             properties.gameReference._loseGame();
         }
         else {
+            // diagonal tiles to ones with 0 bombs around them aren't revealed because...
+            // ...
+            // so we can reveal them to reduce unnecessary clicks and make the game harder
             properties.buttonElement.classList.toggle('tile--revealed');
             
             const [tileX, tileY] = properties.getCoordinates();

@@ -54,7 +54,8 @@ function Game() {
     
     const _GAME_OVER_IMG_PATH = "./assets/img/game_over.png";
     const _NEW_GAME_IMG_PATH = "./assets/img/game_good.png";
-    
+    const _WON_GAME_IMG_PATH = "./assets/img/game_win.webp";
+     
     const _gameContainerElement = document.getElementById('game-container');
     const _flagCounterElement = _gameContainerElement.querySelector('#flag-counter');
     const _timerElement = _gameContainerElement.querySelector('#timer');
@@ -97,26 +98,39 @@ function Game() {
     // ... `this`'s specification details.
     
     this._checkWinCondition = function() {
-        // for (const tileElement of fuckThis.tileMatrix) {
-        //     const tile = fuckThis._findTileFromButton(tileElement);
-            
-        //     const tilesInMatrix =
-        //     const revealedTiles = 
-        //     const bombTiles = 
-            
-        //     // all safe tiles have been revealed. you win!!
-        //     if (revealedTiles.length + bombTiles.length == tilesInMatrix) {
-        //         // you win
-        //     }
-        // }
-    }
-    
-    this._showBombs = function() {
         for (const tileElement of fuckThis.tileMatrix) {
             const tile = fuckThis._findTileFromButton(tileElement);
             
-            if (tile.isBomb && !tile.isRevealed) {
-                tileElement.classList.add('tile--bomb');
+            // We could instead use hard-coded or user defined board size in the next version.
+            const tilesInMatrix = fuckThis.tileMatrix.reduce(
+                (itemCount, currentRow) => itemCount += currentRow.length
+            );
+            
+            const bombTiles = 0;
+            const revealedTiles = 0;
+            for (const row of fuckThis.tileMatrix) {
+                for (const tile of row) {
+                    if (tile.isRevealed) {
+                        revealedTiles++;
+                    }
+                    else if (tile.isBomb) {
+                        bombTiles++;
+                    }
+                }
+            }
+            
+            if (revealedTiles.length + bombTiles.length == tilesInMatrix) {
+                this._winGame();
+            }
+        }
+    }
+    
+    this._showBombs = function() {
+        for (const row of fuckThis.tileMatrix) {
+            for (const tile of row) {
+                if (tile.isBomb && !tile.isRevealed) {
+                    tile.buttonElement.classList.add('tile--bomb');
+                }
             }
         }
     }
@@ -172,9 +186,11 @@ function Game() {
         // search for associated tile data in the matrix:
         let tile;
         for (const row of fuckThis.tileMatrix) {
-            tile = tile || row.filter(
+            const siftedTileFromRow = row.filter(
                 (tileInstance) => tileInstance.buttonElement === tileButtonElement
-            )[0];
+            );
+            
+            tile = tile || siftedTileFromRow[0];
             
             // Tile found
             if (tile) {
@@ -206,6 +222,26 @@ function Game() {
             }
         }
     }
+    
+    this._winGame = function() {
+        // Stop the timer
+        fuckThis._stopTimer();
+        
+        // Update new game button icon
+        _newGameButtonImage.setAttribute('src', _WON_GAME_IMG_PATH);
+        _newGameButtonImage.setAttribute('alt', "smiling face");
+        
+        // Prevent tile interaction:
+        for (const row of this.tileMatrix) {
+            for (const tile of row) {
+                // Disable left-click handling
+                tile.buttonElement.removeEventListener('click', fuckThis._onTileLeftClick);
+                
+                // Disable right-click handling
+                tile.buttonElement.removeEventListener('contextmenu', fuckThis._onTileRightClick);
+            }
+        }
+    }
 
     this._loseGame = function() {
         // Stop the timer
@@ -214,6 +250,9 @@ function Game() {
         // Update new game button icon
         _newGameButtonImage.setAttribute('src', _GAME_OVER_IMG_PATH);
         _newGameButtonImage.setAttribute('alt', "frowning face with x characters as eyes");
+        
+        // Show other bombs
+        fuckThis._showBombs();
         
         // Prevent tile interaction:
         for (const row of this.tileMatrix) {
@@ -235,9 +274,12 @@ function Game() {
         
         // Add 1 to the timer every second.
         timerIntervalID = setInterval(function() {
-            _currentTime += 1;
-            // is there a gotcha with String(...), or was it new String(...)? (or instead Number?)
-            _timerElement.textContent = String(_currentTime).padStart(3, "0");
+            // We can optimize this by pausing the timer after 999 to save on performance.
+            if (_currentTime < 999) {
+                _currentTime += 1;
+                // is there a gotcha with String(...), or was it new String(...)? (or instead Number?)
+                _timerElement.textContent = String(_currentTime).padStart(3, "0");
+            }
         }, 1000);
     }
     

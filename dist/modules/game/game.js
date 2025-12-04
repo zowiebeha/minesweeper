@@ -11,7 +11,7 @@ import Tile from "./tileNew.js";
 
 // Or maybe the imperfect and, at times, incorrect book YDKJS can assist?
 
-function Game() {
+function Game(settings) {
     /////////////////////////////////////
     // Encapsulated Element References //
     /////////////////////////////////////
@@ -80,7 +80,11 @@ function Game() {
     ];
     
     // n x n
-    const boardLength = 9;
+    const boardLength = settings.GRID_LENGTH;
+    
+    // Each tile is 2rem in length
+    _gameBoardElement.style.width = `${boardLength * 2}rem`;
+    _gameBoardElement.style.height = `${boardLength * 2}rem`;
     
     /*
         // Better?:

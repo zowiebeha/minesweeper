@@ -109,6 +109,11 @@ h2 {
 */
 
 #game-container {
+    /* If in the settings we define a small tile grid area, ensure it is centered. */
+    display: grid;
+    justify-items: center;
+    gap: var(--container-inner-spacing);
+            
     background: rgb(204, 204, 204);
     order: -1;
     
@@ -153,6 +158,7 @@ h2 {
         padding: calc(var(--container-inner-spacing) / 2);
         
         display: flex;
+        gap: var(--container-inner-spacing);
         justify-content: space-between;
         align-items: center;
         
@@ -191,8 +197,6 @@ h2 {
         
         border: var(--border-prop-values);
         border-color: var(--border-color-prop-values-inverted);
-        
-        margin-top: var(--container-inner-spacing);
     }
 }
 

@@ -1,0 +1,68 @@
+# Style Perfection:
+
+Checkerboard background:
+    Reverse-engineer a repeating linear-gradient checkerboard pattern
+    
+    conic-gradient, linear-gradient, 
+
+    Learn conic-gradients
+        Answer all my questions
+        ? Why does conic-gradient repeat if it's smaller than the container size?
+        answer: background-repeat
+    Learn border-image to make a perfect checkerboard with black tiles at each corner
+    
+    ✅Attempt to make a conic-gradient checkerboard pattern
+    Reverse-engineer a repeating conic-gradient checkerboard pattern
+    Reverse-engineer a supposed linear-gradient checkerboard pattern
+
+Border true inset
+    Use border-image for correct colors instead of inset style
+    Learn about browser's internal inset color calculation
+    The browser muddles with the inset color ... >:(
+        
+Digital clock style number display:
+    Read about color pallets and fonts
+
+🚧 Refactor current styling to be cleaner
+
+🚧 Choose a new `game_win` image with correct center point and size
+
+Animate the checkerboard to slowly move in one direction (disabled if user prefers reduced motion)
+
+# Function (12/4):
+
+🚧 Finish Prototypes
+    > complete out my unknown questions and my playground folder questions
+Learn Classes
+    > Refactor code to be made with proper privacy
+    > Refactor logic to be good
+        - 🚧 flag bug with revealed tile (not sure how it happened)
+    > Add more logic
+        - visually indicate that bombs were successfully flagged on the death screen
+        - reveal diagonal tiles if the current tile has no bombs adjacent to it so as to save the user from an extra click
+        - Make the algorithm create puzzles that are solvable without random choices
+
+Learn asynchronous computing
+    > Make the algorithms really fast
+    
+Learn the internals of the `this` keyword
+    > Depression
+ 
+Learn the rest of the modules page
+
+Learn Web Components / React
+    > More maintainable state management
+    > Routing like it's a real website
+
+Express for a blog
+Express for user accounts and high-scores (server authority)
+
+Learn Cloudflare
+    > Eventually deploy the frontend
+    > Asyncronous computing is a pre-req
+
+Learn CompTIA A+/Networking/Linux
+    > Eventually deploy the backend
+
+Continue learning, and making it better each day!!
+    Performance, SQL, DevTools, Build tools, ...

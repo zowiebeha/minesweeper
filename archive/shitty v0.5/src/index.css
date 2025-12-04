@@ -1,0 +1,321 @@
+/*
+=====================
+    Browser overrides
+=====================
+*/
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+    font-family: "Poppins";
+    color: rgb(8, 8, 8);
+}
+
+code {
+    background: rgb(184, 159, 60);
+    border: 1px solid rgb(151, 130, 46);
+    padding: .25rem;
+    border-radius: .2rem;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* todo: stylize and understand height relationship: */
+html {
+    height: 100vh;
+}
+
+body {
+    height: 100%;
+    
+    --background-tile-area: 1rem;
+    --tile-color-dark: rgba(181, 180, 176, 0.177);
+    --tile-color-light: rgb(226, 226, 224);
+    
+    background: 
+        conic-gradient(var(--tile-color-light) 0deg, 90deg, var(--tile-color-dark) 90deg, 180deg, var(--tile-color-light) 180deg, 270deg, var(--tile-color-dark) 270deg, 360deg, var(--tile-color-light) 360deg),
+        rgb(247, 247, 247);
+    background-size: var(--background-tile-area) var(--background-tile-area);
+}
+
+h2 {
+    margin-top: 1rem;
+}
+
+.noscript {
+    display: inline-block; /* permit width changes */
+    background: rgb(227, 30, 30);
+    border-bottom: 2px solid rgb(206, 32, 32);
+    
+    text-shadow: 0 0 6px rgba(57, 3, 3, 0.64);
+    text-align: center;
+    
+    padding: .5rem;
+    color: white;
+    width: 100%;
+}
+
+h1 {
+    margin-top: 2rem;
+}
+
+h2 {
+    margin-bottom: 1rem;
+}
+
+/*
+=====================
+    Fonts
+=====================
+*/
+
+@font-face {
+    font-family: "14 Segment LED";
+    src: url("./assets/fonts/14-segment-led/14\ Segment\ LED\ Regular.ttf") format('truetype');
+}
+
+@font-palette-values --red-color-palette {
+  color: red;
+  /* Overriding colors at index 0 and 2 */
+  /* override-colors: 2 #ffffff; */
+}
+
+/*
+=====================
+    Announcements
+=====================
+*/
+
+#server-notice {
+    /* Center paragraphs without affecting alignment */
+    /* Works, since grid-template-columns is auto by default, which makes the container assume the inline length of its longest inline lengthened child */
+    display: grid;
+    justify-content: center;
+    gap: .5rem;
+    
+    padding: 1rem;
+    background: rgb(213, 195, 106);
+    border-bottom: 2px solid rgb(172, 158, 85);
+    
+    p {
+        color: rgb(38, 32, 2);
+    }
+}
+
+/*
+=====================
+    Game Board
+=====================
+*/
+
+#game-container {
+    background: rgb(204, 204, 204);
+    order: -1;
+    
+    /* == Variables == */
+    --container-inner-spacing: 1rem;
+    --border-color-light: white;
+    --border-color-dark: grey;
+    --border-thickness: 4px;
+    --border-style: inset;
+    
+    --border-prop-values: 
+        var(--border-thickness)
+        var(--border-style);
+        
+    --border-color-prop-values:
+        var(--border-color-light)
+        var(--border-color-dark)
+        var(--border-color-dark)
+        var(--border-color-light);
+        
+    --border-color-prop-values-inverted:
+        var(--border-color-dark)
+        var(--border-color-light)
+        var(--border-color-light)
+        var(--border-color-dark);
+        
+    --tile-size: 2rem;
+    /* =============== */
+    
+    border: var(--border-prop-values);
+    border-color: var(--border-color-prop-values);
+    
+    width: fit-content;
+    height: fit-content;
+    
+    padding: var(--container-inner-spacing);
+    
+    #game-header {
+        border: var(--border-prop-values);
+        border-color: var(--border-color-prop-values-inverted);
+            
+        padding: calc(var(--container-inner-spacing) / 2);
+        
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        #flag-counter,
+        #timer {
+            font-family: "14 Segment LED";
+            font-palette: --red-color-palette;
+            font-size: 2rem;
+        }
+        
+        #btn--new-game {
+            background: rgb(204, 204, 204);
+            height: calc(var(--tile-size) * 2);
+            width: calc(var(--tile-size) * 2);
+            
+            border: var(--border-prop-values);
+            border-color: var(--border-color-prop-values);
+            
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+    
+    #game-board {
+        display: flex;
+        flex-wrap: wrap;
+        
+        /* Ensure width is perfect and is not squished by border or padding. */
+        box-sizing: content-box;
+        
+        /* 9x9 tileset */
+        width: calc(var(--tile-size) * 9);
+        height: calc(var(--tile-size) * 9);
+        
+        border: var(--border-prop-values);
+        border-color: var(--border-color-prop-values-inverted);
+        
+        margin-top: var(--container-inner-spacing);
+    }
+}
+
+/*
+=====================
+    Tile Variants
+=====================
+*/
+
+#game-board {
+    .tile {
+        flex-shrink: 0;
+        
+        width: var(--tile-size);
+        height: var(--tile-size);
+        
+        display: flex;
+        justify-content: center;
+        /* Vertically center TextNodes within container */
+        align-items: center;
+        
+        background: lightgrey;
+        
+        border: var(--border-prop-values);
+        border-color: var(--border-color-prop-values);
+        
+        font-weight: bold;
+        
+        font-size: 1.25rem;
+        
+        &:hover {
+            background: rgb(196, 196, 196);
+        }
+    }
+        
+    
+    .tile.tile--revealed {
+        border: 2px solid rgb(144, 144, 144);
+        &:hover {
+            cursor: initial;
+            background: lightgrey;
+        }
+    }
+    
+    .tile.tile--flagged {
+        background-image: url("./assets/img/flag.png");
+        background-size: cover; /* why do we need this? maybe because the image is too large? */
+    }
+    
+    .tile.tile--bombed {
+        background: rgb(237, 57, 57);
+        background-image: url("./assets/img/mine.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    
+    .tile.tile--bomb {
+        background: rgb(138, 125, 125);
+        background-image: url("./assets/img/mine.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+}
+
+/*
+=====================
+    Tile numbers
+=====================
+*/
+
+.tile.number {
+    font-family: Arial;
+}
+.tile.number--1 {
+    color: blue;
+}
+.tile.number--2 {
+    color: green;
+}
+.tile.number--3 {
+    color: red;
+}
+.tile.number--4 {
+    color: darkblue;
+}
+.tile.number--5 {
+    color: darkred;
+}
+.tile.number--6 {
+    color: cyan;
+}
+.tile.number--8 {
+    color: darkgrey;
+}
+
+/*
+=====================
+    Content
+=====================
+*/
+
+main {
+    display: grid;
+    justify-items: center;
+    
+    padding: 2rem;
+}
+
+#game-info {
+    text-align: center;
+}
+
+/*
+=====================
+    Utilities
+=====================
+*/
+
+.sr-only {
+    position: absolute;
+    left: -100vw;
+}

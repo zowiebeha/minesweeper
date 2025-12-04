@@ -54,7 +54,7 @@ function Game() {
     
     const _GAME_OVER_IMG_PATH = "./assets/img/game_over.png";
     const _NEW_GAME_IMG_PATH = "./assets/img/game_good.png";
-    const _WON_GAME_IMG_PATH = "./assets/img/game_win.webp";
+    const _WON_GAME_IMG_PATH = "./assets/img/game_win.gif";
      
     const _gameContainerElement = document.getElementById('game-container');
     const _flagCounterElement = _gameContainerElement.querySelector('#flag-counter');
@@ -79,6 +79,9 @@ function Game() {
         // ....
     ];
     
+    // n x n
+    const boardLength = 9;
+    
     /*
         // Better?:
         // this would be easier to write. I could use getters/setters.
@@ -97,30 +100,32 @@ function Game() {
     // An in-depth understanding of Classes will assist me in understanding
     // ... `this`'s specification details.
     
-    this._checkWinCondition = function() {
-        for (const tileElement of fuckThis.tileMatrix) {
-            const tile = fuckThis._findTileFromButton(tileElement);
-            
-            // We could instead use hard-coded or user defined board size in the next version.
-            const tilesInMatrix = fuckThis.tileMatrix.reduce(
-                (itemCount, currentRow) => itemCount += currentRow.length
-            );
-            
-            const bombTiles = 0;
-            const revealedTiles = 0;
-            for (const row of fuckThis.tileMatrix) {
-                for (const tile of row) {
-                    if (tile.isRevealed) {
-                        revealedTiles++;
-                    }
-                    else if (tile.isBomb) {
-                        bombTiles++;
-                    }
+    // We could instead use a user-defined board size in the next version.
+    const _tilesInMatrix = boardLength * boardLength;
+    this.checkWinCondition = function() {
+        // Don't run the algorithm and win code if we already won.
+        // Makes this method idempotent, which is needed since tiles will reveal themselves
+        // ... in crawl batches and then call this method, at which point all tiles may be revealed.
+        // This can cause the method to be called multiple times.
+        // Is there an optimization we can make to not do that?
+        if (fuckThis.won)
+            return;
+        
+        let bombTiles = 0; // We can instead cache this upon generation
+        let revealedTiles = 0; // We can keep track of how many tiles are revealed with state instead
+        
+        for (const row of fuckThis.tileMatrix) {
+            for (const tile of row) {
+                if (tile.isRevealed) {
+                    revealedTiles++;
                 }
-            }
-            
-            if (revealedTiles.length + bombTiles.length == tilesInMatrix) {
-                this._winGame();
+                else if (tile.isBomb) {
+                    bombTiles++;
+                }
+                
+                if (revealedTiles + bombTiles == _tilesInMatrix) {
+                    fuckThis._winGame();
+                }
             }
         }
     }
@@ -204,10 +209,10 @@ function Game() {
     this._generateBoard = function() {
         _gameBoardElement.innerHTML = '';
         
-        for (let y = 0; y < 9; y++) {
+        for (let y = 0; y < boardLength; y++) {
             this.tileMatrix[y] = [];
             
-            for (let x = 0; x < 9; x++) {
+            for (let x = 0; x < boardLength; x++) {
                 // Pass a reference of this Game instance to the Tile
                 const newTile = Tile(fuckThis);
                 
@@ -224,6 +229,8 @@ function Game() {
     }
     
     this._winGame = function() {
+        fuckThis.won = true; // to prevent subsequent calls to _checkWinCondition during reveal() crawls.
+        
         // Stop the timer
         fuckThis._stopTimer();
         
@@ -294,6 +301,8 @@ function Game() {
     }
     
     this._newGame = function() {
+        fuckThis.won = false;
+        
         // Stop timer from counting up, since that is to occur on first tile interaction.
         if (timerIntervalID) {
             fuckThis._stopTimer();
@@ -309,7 +318,7 @@ function Game() {
         
         // If the player lost that round, update the new game button image
         // == or ===?
-        if (_newGameButtonImage.getAttribute('src') == _GAME_OVER_IMG_PATH) {
+        if (_newGameButtonImage.getAttribute('src') != _NEW_GAME_IMG_PATH) {
             _newGameButtonImage.setAttribute('src', _NEW_GAME_IMG_PATH);
             _newGameButtonImage.setAttribute('alt', "smiley face");
         }

@@ -104,7 +104,7 @@ function Tile(gameReference) {
                 }
             }
             
-            // Reveal unless a bomb is adjacent.
+            // Reveal tiles around this tile unless a bomb is adjacent.
             // This prevents one click from revealing the whole board apart from mines
             // ... and safe tiles surrounded by mines.
             if (adjacentBombCount == 0) {                
@@ -128,6 +128,10 @@ function Tile(gameReference) {
                 properties.buttonElement.classList.add(`number--${adjacentBombCount}`);
                 properties.buttonElement.textContent = adjacentBombCount;
             }
+            
+            // _checkWinCondition will be called at the end of each adjacent tile crawl.
+            // So this function has to be idempotent, as it will be called many times.
+            properties.gameReference.checkWinCondition();
         }
     };
     
